@@ -19,15 +19,41 @@
     <h2>Welcome Back!</h2>
     <p>Login to your account</p>
     
-    <input type="text" placeholder="Mobile Number">
-    <input type="password" placeholder="Password">
+    <input type="text" id="mobile" placeholder="Mobile Number">
+    <input type="password" id="password" placeholder="Password">
     
-    <button>Login Now</button>
+    <button onclick="loginUser()">Login Now</button>
 
     <p style="margin-top: 15px; font-size: 14px;">
-        Don't have an account? <a href="index.html">Register</a>
+        Don't have an account? <a href="/">Register</a>
     </p>
 </div>
+
+<script>
+    async function loginUser() {
+        const mobile = document.getElementById('mobile').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mobile, password })
+            });
+
+            const data = await response.json();
+            if(data.success) {
+                alert("Login Successful!");
+                // यहाँ से तुम उसे गेम वाले पेज पर भेज सकते हो
+                window.location.href = '/dashboard.html'; 
+            } else {
+                alert(data.message || "Login failed!");
+            }
+        } catch (error) {
+            alert("Server se connection nahi ho raha hai!");
+        }
+    }
+</script>
 
 </body>
 </html>
