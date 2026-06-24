@@ -27,7 +27,7 @@
     
     <button onclick="registerUser()">Register Now</button>
 
-    <p>Already have an account? <a href="login.html">Login</a></p>
+    <p>Already have an account? <a href="#">Login</a></p>
 </div>
 
 <script>
@@ -42,18 +42,24 @@
             return;
         }
 
-        const response = await fetch('http://localhost:3000/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mobile, referralCode })
-        });
+        // यहाँ localhost हटाकर सिर्फ /register कर दिया है
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mobile, referralCode })
+            });
 
-        const data = await response.json();
-        if(data.success) {
-            alert("Registration Successful! Your ID: " + data.userId);
-            window.location.href = "login.html";
-        } else {
-            alert(data.message);
+            const data = await response.json();
+            if(data.success) {
+                alert("Registration Successful! Your ID: " + data.userId);
+                // अगर लॉगिन पेज नहीं है, तो अभी यहीं रहने दे
+            } else {
+                alert(data.message || "Registration failed!");
+            }
+        } catch (error) {
+            alert("Server se connection nahi ho raha hai. Try again!");
+            console.error("Error:", error);
         }
     }
 </script>
