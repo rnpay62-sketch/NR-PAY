@@ -1,16 +1,20 @@
 {
   "name": "rn-pay",
   "version": "1.0.0",
+  "description": "RN PAY Payment Application",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/rnpay62-sketch/NR-PAY.git"
   },
   "dependencies": {
-    "express": "^5.2.1",
-    "mongoose": "^9.7.3"
+    "express": "^4.21.0",
+    "mongoose": "^8.2.0"
   }
 }
