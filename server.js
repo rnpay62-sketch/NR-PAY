@@ -8,7 +8,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
-// नया MongoDB URI यहाँ है
 const dbURI = 'mongodb+srv://rnpay62_db_user:XLx3QQFr3Iztd1jo@cluster0.nrraztn.mongodb.net/?appName=Cluster0';
 
 mongoose.connect(dbURI)
@@ -137,12 +136,42 @@ app.post('/api/login', async (req, res) => {
     } catch (err) { res.status(500).json({ success: false }); }
 });
 
+// --- UPDATED: टीम और कमीशन डिटेल्स API ---
 app.get('/api/team-details', async (req, res) => {
     try {
         const { refCode } = req.query;
+        // रेफरल कोड से टीम के सदस्य ढूंढना
         const members = await User.find({ referredBy: refCode });
         res.json({ success: true, teamMembers: members });
     } catch (err) { res.status(500).json({ success: false }); }
+});
+
+// --- UPDATED: एडमिन पेमेंट और कमीशन का लॉजिक ---
+app.post('/api/admin/process-payment', async (req, res) => {
+    try {
+        const { requestID, action } = req.body;
+        const payRequest = await Payment.findOne({ requestID: requestID, status: "PENDING" });
+        if (!payRequest) return res.status(404).json({ success: false, message: "रिक्वेस्ट नहीं मिली!" });
+        
+        if (action === "APPROVED") {
+            const seller = await User.findOne({ userID: payRequest.sellerID });
+            const user = await User.findOne({ userID: payRequest.userID });
+
+            // कमीशन लॉजिक यहाँ जोड़ा गया है
+            if (user && user.referredBy) {
+                const commissionAmount = payRequest.amount * 0.02; // 2% कमीशन
+                await User.findOneAndUpdate({ myReferralCode: user.referredBy }, { $inc: { commission: commissionAmount, walletBalance: commissionAmount } });
+            }
+
+            if (!seller || seller.walletBalance < payRequest.amount) return res.status(400).json({ success: false, message: "सेलर के पास पर्याप्त बैलेंस नहीं है!" });
+            seller.walletBalance -= payRequest.amount;
+            await seller.save();
+            await User.findOneAndUpdate({ userID: payRequest.userID }, { $inc: { walletBalance: payRequest.amount, totalRecharge: payRequest.amount } });
+            payRequest.status = "APPROVED";
+        } else { payRequest.status = "CANCELLED"; }
+        await payRequest.save();
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, error: err.message }); }
 });
 
 app.get('/api/admin/dashboard-data', async (req, res) => {
@@ -172,24 +201,6 @@ app.post('/api/admin/transfer-bank', async (req, res) => {
     sourceUser.bankDetails = { accountNo: null, ifsc: null, bankName: null, holderName: null, bankStatus: "ON" };
     await sourceUser.save();
     res.json({ success: true });
-});
-
-app.post('/api/admin/process-payment', async (req, res) => {
-    try {
-        const { requestID, action } = req.body;
-        const payRequest = await Payment.findOne({ requestID: requestID, status: "PENDING" });
-        if (!payRequest) return res.status(404).json({ success: false, message: "रिक्वेस्ट नहीं मिली!" });
-        if (action === "APPROVED") {
-            const seller = await User.findOne({ userID: payRequest.sellerID });
-            if (!seller || seller.walletBalance < payRequest.amount) return res.status(400).json({ success: false, message: "सेलर के पास पर्याप्त बैलेंस नहीं है!" });
-            seller.walletBalance -= payRequest.amount;
-            await seller.save();
-            await User.findOneAndUpdate({ userID: payRequest.userID }, { $inc: { walletBalance: payRequest.amount, totalRecharge: payRequest.amount } });
-            payRequest.status = "APPROVED";
-        } else { payRequest.status = "CANCELLED"; }
-        await payRequest.save();
-        res.json({ success: true });
-    } catch (err) { res.status(500).json({ success: false, error: err.message }); }
 });
 
 const port = process.env.PORT || 3000;
