@@ -1,99 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deposit Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Task Center</title>
     <style>
-        body { background: #0d1117; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 80px; }
-        .tabs { display: flex; justify-content: center; gap: 40px; padding: 20px; background: #161b22; border-bottom: 1px solid #30363d; }
-        .tab-btn { background: none; border: none; color: #8b949e; cursor: pointer; font-size: 18px; font-weight: bold; }
-        .tab-btn.active { color: #ffbf00; border-bottom: 2px solid #ffbf00; }
-        .content { display: none; }
-        .content.active { display: block; }
-
-        .task-card { background: #161b22; margin: 10px; padding: 15px; border-radius: 12px; border: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
-        .buy-btn { background: #2575fc; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 0 10px #2575fc; }
-
-        .usdt-box { padding: 20px; text-align: center; }
-        #qr-code-img { width: 180px; height: 180px; background: white; padding: 10px; margin: 20px auto; border-radius: 8px; }
-        .wallet-box { background: #161b22; padding: 15px; border: 1px solid #30363d; border-radius: 8px; margin: 20px 0; }
+        /* मोबाइल पर स्क्रीन फिक्स रखने के लिए CSS */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background: #0e1215; 
+            color: #fff; 
+            font-family: sans-serif; 
+            padding-bottom: 70px;
+            touch-action: manipulation;
+        }
         
-        .nav { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #30363d; }
+        /* INR Task Design */
+        .card { background: #008cff; padding: 12px; margin-bottom: 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        .buy-btn { background: #faf8f8; color: #ff0000; border: 1px solid #ffffff; padding: 5px 15px; border-radius: 15px; cursor: pointer; }
+
+        /* Payment Form */
+        #payment-form { display: none; background: #1c2227; padding: 15px; border-radius: 10px; border: 1px solid #333; }
+        .bank-info { background: #333; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
+        .inline-detail { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .copy-btn { cursor: pointer; background: #555; border: none; color: #fff; padding: 2px 8px; border-radius: 4px; }
+
+        /* Navigation Bar */
+        .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #1c2227; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #333; z-index: 1000; }
+        .nav-item { color: #fff; text-decoration: none; text-align: center; font-size: 12px; }
     </style>
 </head>
 <body>
+    <script>
+        document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    </script>
 
-<div class="tabs">
-    <button class="tab-btn active" onclick="show('inr')">INR</button>
-    <button class="tab-btn" onclick="show('usdt')">USDT</button>
-</div>
-
-<div id="inr-section" class="content active">
+    <h3>Task Center</h3>
     <div id="task-list"></div>
-</div>
 
-<div id="usdt-section" class="content">
-    <div class="usdt-box">
-        <img id="qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TDBuftovrajbsdMhXWHuoPATqAHDcthbx" alt="QR">
-        <div class="wallet-box">
-            <small>Wallet Address (TRC-20)</small>
-            <div id="wallet-address" style="font-weight:bold; margin:10px 0; word-break: break-all;">TDBuftovrajbsdMhXWHuoPATqAHDcthbx</div>
-            <button onclick="copyWallet()" style="background:#444; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer;">COPY</button>
+    <div id="payment-form">
+        <h4 style="margin-top: 0; color: #00d4ff;">Order Amount: <span id="display-amount">0</span> INR</h4>
+        <div class="bank-info">
+            <div class="inline-detail">Acc: <span id="acc">20401036509</span> <button class="copy-btn" onclick="copyText('acc')">Copy</button></div>
+            <div class="inline-detail">IFSC: <span id="ifsc">FINO0009001</span> <button class="copy-btn" onclick="copyText('ifsc')">Copy</button></div>
+            <div class="inline-detail">Name: <span id="name">NOOR BHANU BEGUM</span> <button class="copy-btn" onclick="copyText('name')">Copy</button></div>
+            <div class="inline-detail">Bank: <span id="bank">FINO PAYMENT BANK</span> <button class="copy-btn" onclick="copyText('bank')">Copy</button></div>
         </div>
-        <input type="number" id="amt" placeholder="Enter USDT Amount" style="width:90%; padding:15px; background:#161b22; color:white; border:1px solid #30363d; border-radius:8px;">
-        <button onclick="exchangeUSDT()" style="width:90%; padding:15px; background:#2575fc; margin-top:20px; color:white; border:none; border-radius:8px; font-weight:bold;">EXCHANGE TO INR</button>
+        <input type="text" id="utr-number" placeholder="Enter UTR Number" style="width:100%; padding:10px; box-sizing:border-box; background: #0e1215; color: #fff; border: 1px solid #444; border-radius: 5px;">
+        <input type="file" id="file-proof" style="margin: 10px 0; color: #fff;">
+        <button onclick="submitOrder()" style="width:100%; padding:10px; background:#00d4ff; border:none; cursor:pointer; font-weight: bold; border-radius: 5px;">Submit</button>
+        <button onclick="cancelOrder()" style="width:100%; padding:10px; background:#ff5252; border:none; cursor:pointer; font-weight: bold; margin-top: 5px; border-radius: 5px;">Cancel</button>
+        <button onclick="closeForm()" style="width:100%; padding:10px; margin-top:5px; background:#444; color:#fff; border:none; cursor: pointer; border-radius: 5px;">Back</button>
     </div>
-</div>
 
-<div class="nav">
-    <a href="dashboard.html" style="color:white; text-decoration:none;">🏠 Home</a>
-    <a href="deposit.html" style="color:white; text-decoration:none;">💰 Deposit</a>
-    <a href="bank.html" style="color:white; text-decoration:none;">🏦 Bank</a>
-    <a href="team.html" style="color:white; text-decoration:none;">👥 Team</a>
-    <a href="profile.html" style="color:white; text-decoration:none;">👤 Profile</a>
-</div>
+    <div class="navbar">
+        <a href="dashboard.html" class="nav-item">🏠<br>Home</a>
+        <a href="deposit.html" class="nav-item">💰<br>Deposit</a>
+        <a href="bank.html" class="nav-item">🏦<br>Bank</a>
+        <a href="team.html" class="nav-item">👥<br>Team</a>
+        <a href="profile.html" class="nav-item">👤<br>Profile</a>
+    </div>
 
-<script>
-    function show(id) {
-        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-        document.getElementById(id + '-section').classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
+    <script>
+        let currentSelectedAmount = 0;
 
-    const list = document.getElementById('task-list');
-    for (let i = 1; i <= 50; i++) { // मैंने 500 से घटाकर 50 कर दिया ताकि पेज भारी न हो
-        let price = 1000 + (i * 200);
-        list.innerHTML += `<div class="task-card">
-            <div><strong>${price} INR</strong><br><small>Income: ${(price*0.03).toFixed(2)} (4%)</small></div>
-            <a href="order_details.html?amt=${price}"><button class="buy-btn">Buy</button></a>
-        </div>`;
-    }
+        function copyText(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+        }
 
-    // USDT एक्सचेंज फंक्शन
-    async function exchangeUSDT() {
-        const amt = document.getElementById('amt').value;
-        const userId = localStorage.getItem('userId');
-        
-        if(!amt) { alert("Enter Amount!"); return; }
+        function handleBuyClick(amount) {
+            currentSelectedAmount = amount;
+            document.getElementById('display-amount').innerText = amount;
+            document.getElementById('task-list').style.display = 'none';
+            document.getElementById('payment-form').style.display = 'block';
 
-        const response = await fetch('http://localhost:3000/deposit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, amount: amt })
-        });
-        
-        const data = await response.json();
-        alert(data.message);
-    }
+            const activeOrders = JSON.parse(localStorage.getItem('my_recharge_orders') || '[]');
+            const newOrder = {
+                id: "TXN" + Math.floor(Math.random() * 900000 + 100000),
+                amount: amount,
+                status: "In Payment",
+                date: new Date().toLocaleString(),
+                bankDetails: {
+                    accountNo: document.getElementById('acc').innerText,
+                    ifsc: document.getElementById('ifsc').innerText,
+                    holderName: document.getElementById('name').innerText
+                }
+            };
+            
+            activeOrders.push(newOrder);
+            localStorage.setItem('my_recharge_orders', JSON.stringify(activeOrders));
+            localStorage.setItem('current_active_txn_id', newOrder.id);
+        }
 
-    function copyWallet() {
-        let text = document.getElementById('wallet-address').innerText;
-        navigator.clipboard.writeText(text);
-        alert("Address Copied!");
-    }
-</script>
+        function submitOrder() {
+            const utr = document.getElementById('utr-number').value.trim();
+            if(!utr) { alert("Please enter UTR number!"); return; }
 
+            const activeOrders = JSON.parse(localStorage.getItem('my_recharge_orders') || '[]');
+            const currentTxnId = localStorage.getItem('current_active_txn_id');
+            
+            const orderIndex = activeOrders.findIndex(o => o.id === currentTxnId);
+            if(orderIndex !== -1) {
+                activeOrders[orderIndex].status = "Pending";
+                activeOrders[orderIndex].utr = utr;
+            }
+            localStorage.setItem('my_recharge_orders', JSON.stringify(activeOrders));
+            alert('Submitted Successfully!');
+            closeForm();
+        }
+
+        function cancelOrder() {
+            closeForm();
+        }
+
+        function closeForm() {
+            document.getElementById('payment-form').style.display = 'none';
+            document.getElementById('task-list').style.display = 'block';
+            document.getElementById('utr-number').value = "";
+        }
+
+        const list = document.getElementById('task-list');
+        for(let i=200; i<=50000; i+=200) {
+            list.innerHTML += `<div class="card">
+                <div><strong>${i} INR</strong><br><small>4% | +${(i*1.04).toFixed(0)}</small></div>
+                <button class="buy-btn" onclick="handleBuyClick(${i})">Buy</button>
+            </div>`;
+        }
+    </script>
 </body>
 </html>

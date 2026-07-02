@@ -1,126 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bank Management</title>
     <style>
-        body { background: #0d1117; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 90px; }
-        .header { padding: 25px; font-size: 24px; font-weight: bold; text-align: center; color: #ffbf00; border-bottom: 1px solid #30363d; }
-        .card { background: #161b22; margin: 15px; padding: 20px; border-radius: 12px; border: 1px solid #30363d; }
-        .input-field { width: 100%; padding: 15px; margin: 10px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 8px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 15px; background: #2575fc; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; font-size: 16px; }
-        #saved-card { display: none; text-align: center; border: 1px solid #2575fc; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #30363d; }
+        /* मोबाइल पर स्क्रीन फिक्स रखने के लिए CSS */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background: #0e1215; 
+            color: #fff; 
+            font-family: sans-serif; 
+            padding: 20px; 
+            padding-bottom: 70px;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+        .input-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 10px; box-sizing: border-box; background: #ffffff; border: 1px solid #444; color: #fff; border-radius: 5px; }
+        .save-btn { width: 100%; padding: 12px; background: #00d4ff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        #bank-list-page { display: none; }
+        .bank-card { background: #1c2227; padding: 15px; border-radius: 10px; border: 1px solid #333; margin-top: 10px; }
+        .add-more-btn { margin-top: 20px; text-align: center; color: #00d4ff; cursor: pointer; text-decoration: underline; }
+
+        /* Navigation Bar */
+        .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #1c2227; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #333; z-index: 1000; }
+        .nav-item { color: #fff; text-decoration: none; text-align: center; font-size: 12px; }
     </style>
 </head>
 <body>
+    <script>
+        document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    </script>
 
-<div class="header">Bank Information</div>
+    <div id="add-bank-page">
+        <h3>Add Bank Account</h3>
+        <div class="input-group"><input type="text" id="holderName" placeholder="Account Holder Name"></div>
+        <div class="input-group"><input type="text" id="accNum" placeholder="Account Number"></div>
+        <div class="input-group"><input type="text" id="confirmAccNum" placeholder="Confirm Account Number"></div>
+        <div class="input-group"><input type="text" id="ifscCode" placeholder="IFSC Code"></div>
+        <div class="input-group"><input type="text" id="bankName" placeholder="Bank Name"></div>
+        <button class="save-btn" onclick="saveBank()">SAVE</button>
+    </div>
 
-<div id="form-card" class="card">
-    <input type="text" id="name" class="input-field" placeholder="Account Holder Name">
-    <input list="all-banks" id="bank-input" class="input-field" placeholder="Search any Bank in India...">
-<datalist id="all-banks">
-    <option value="State Bank of India">
-    <option value="HDFC Bank">
-    <option value="ICICI Bank">
-    <option value="Axis Bank">
-    <option value="Kotak Mahindra Bank">
-    <option value="Punjab National Bank">
-    <option value="Bank of Baroda">
-    <option value="Canara Bank">
-    <option value="Union Bank of India">
-    <option value="Bank of India">
-    <option value="Indian Bank">
-    <option value="Central Bank of India">
-    <option value="IDBI Bank">
-    <option value="Indian Overseas Bank">
-    <option value="UCO Bank">
-    <option value="Bank of Maharashtra">
-    <option value="Punjab and Sind Bank">
-    <option value="Yes Bank">
-    <option value="IndusInd Bank">
-    <option value="IDFC First Bank">
-    <option value="Federal Bank">
-    <option value="Bandhan Bank">
-    <option value="City Union Bank">
-    <option value="Dhanlaxmi Bank">
-    <option value="South Indian Bank">
-    <option value="Jammu and Kashmir Bank">
-    <option value="Karur Vysya Bank">
-    <option value="Lakshmi Vilas Bank">
-    <option value="Nainital Bank">
-    <option value="RBL Bank">
-    <option value="Tamilnad Mercantile Bank">
-    <option value="ESAF Small Finance Bank">
-    <option value="Equitas Small Finance Bank">
-    <option value="AU Small Finance Bank">
-    <option value="Jana Small Finance Bank">
-    <option value="Suryoday Small Finance Bank">
-    <option value="Ujjivan Small Finance Bank">
-    <option value="Utkarsh Small Finance Bank">
-    <option value="Paytm Payments Bank">
-    <option value="Airtel Payments Bank">
-    <option value="Fino Payments Bank">
-</datalist>
-    <input type="text" id="acc" class="input-field" placeholder="Account Number">
-    <input type="text" id="ifsc" class="input-field" placeholder="IFSC Code">
-    <button class="btn" onclick="saveBank()">SAVE BANK DETAILS</button>
-</div>
+    <div id="bank-list-page">
+        <h3>My Bank Accounts</h3>
+        <div id="saved-details" class="bank-card"></div>
+        <div class="add-more-btn" onclick="showAddPage()">+ More Add Bank</div>
+    </div>
 
-<div id="saved-card" class="card">
-    <h3 style="color:#ffbf00;">Bank Account Saved</h3>
-    <p id="display-info" style="font-size: 18px;"></p>
-    <button class="btn" style="background:#dc3545;" onclick="deleteBank()">DELETE & CHANGE</button>
-</div>
+    <div class="navbar">
+        <a href="dashboard.html" class="nav-item">🏠<br>Home</a>
+        <a href="deposit.html" class="nav-item">💰<br>Deposit</a>
+        <a href="bank.html" class="nav-item">🏦<br>Bank</a>
+        <a href="team.html" class="nav-item">👥<br>Team</a>
+        <a href="profile.html" class="nav-item">👤<br>Profile</a>
+    </div>
 
-<div class="nav">
-    <a href="dashboard.html" style="color:white; text-decoration:none;">🏠 Home</a>
-    <a href="deposit.html" style="color:white; text-decoration:none;">💰 Deposit</a>
-    <a href="bank.html" style="color:white; text-decoration:none;">🏦 Bank</a>
-    <a href="team.html" style="color:white; text-decoration:none;">👥 Team</a>
-    <a href="profile.html" style="color:white; text-decoration:none;">👤 Profile</a>
-</div>
+    <script>
+        function saveBank() {
+            const holder = document.getElementById('holderName').value;
+            const acc = document.getElementById('accNum').value;
+            const confirmAcc = document.getElementById('confirmAccNum').value;
+            const ifsc = document.getElementById('ifscCode').value;
+            const bank = document.getElementById('bankName').value;
 
-<script>
-    async function saveBank() {
-        const userId = localStorage.getItem('userId');
-        const bankData = {
-            userId: userId,
-            holderName: document.getElementById('name').value,
-            bankName: document.getElementById('bank-input').value,
-            accNumber: document.getElementById('acc').value,
-            ifsc: document.getElementById('ifsc').value
-        };
+            if(acc !== confirmAcc) {
+                alert("Account numbers do not match!");
+                return;
+            }
 
-        const response = await fetch('http://localhost:3000/save-bank', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bankData)
-        });
-
-        const result = await response.json();
-        if(result.success) {
-            alert("Bank Saved!");
-            location.reload();
+            if(holder && acc && ifsc && bank) {
+                document.getElementById('saved-details').innerHTML = `
+                    <p><strong>Name:</strong> ${holder}</p>
+                    <p><strong>Account:</strong> ${acc}</p>
+                    <p><strong>IFSC:</strong> ${ifsc}</p>
+                    <p><strong>Bank:</strong> ${bank}</p>
+                `;
+                document.getElementById('add-bank-page').style.display = 'none';
+                document.getElementById('bank-list-page').style.display = 'block';
+            } else {
+                alert("Please fill all details");
+            }
         }
-    }
 
-    // सर्वर से डेटा चेक करने के लिए
-    async function loadBank() {
-        const userId = localStorage.getItem('userId');
-        const response = await fetch(`http://localhost:3000/get-bank/${userId}`);
-        const data = await response.json();
-        if(data.success && data.bank) {
-            document.getElementById('form-card').style.display = 'none';
-            document.getElementById('saved-card').style.display = 'block';
-            document.getElementById('display-info').innerHTML = `Bank: ${data.bank.bankName}<br>A/c: ${data.bank.accNumber}<br>Holder: ${data.bank.holderName}`;
+        function showAddPage() {
+            document.getElementById('add-bank-page').style.display = 'block';
+            document.getElementById('bank-list-page').style.display = 'none';
         }
-    }
-    
-    function deleteBank() { alert("Contact Admin to change!"); }
-    window.onload = loadBank;
-</script>
+    </script>
 </body>
 </html>

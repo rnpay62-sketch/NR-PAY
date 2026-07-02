@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lucky Wheel</title>
+    <style>
+        /* मोबाइल पर स्क्रीन फिक्स रखने के लिए CSS */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* स्क्रीन को पूरी तरह लॉक करने के लिए */
+            background-color: #0c1117; 
+            color: white; 
+            text-align: center; 
+            font-family: sans-serif;
+            touch-action: manipulation;
+        }
+        /* व्हील को घुमाने का कोड */
+        #wheel { width: 300px; max-width: 90%; transition: transform 4s cubic-bezier(0.17, .67, .12, .99); }
+    </style>
+</head>
+<body>
+    <script>
+        document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+    </script>
+
+    <h2>Lucky Wheel</h2>
+    <img id="wheel" src="lucky_wheel.png" alt="Wheel">
+    <br>
+    <button onclick="spin()" style="padding: 15px 50px; margin-top: 20px; background: #21262d; color: white; border: 1px solid #30363d; cursor: pointer; border-radius: 5px;">Start Spin</button>
+
+    <script>
+        function spin() {
+            let wheel = document.getElementById('wheel');
+            // व्हील को घुमाने के लिए रैंडम डिग्री
+            let randomDeg = Math.floor(Math.random() * 3600) + 3600;
+            wheel.style.transform = "rotate(" + randomDeg + "deg)";
+        }
+    </script>
+</body>
+</html>

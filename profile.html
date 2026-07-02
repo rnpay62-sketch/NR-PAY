@@ -1,102 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Profile</title>
     <style>
-        body { background: #f4f7f6; color: #333; font-family: sans-serif; margin: 0; padding-bottom: 90px; }
-        .header-bg { background: white; padding: 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .profile-top { display: flex; justify-content: space-between; align-items: center; }
-        .logo { width: 50px; height: 50px; border-radius: 12px; }
-        .id-box { background: #f0f0f0; padding: 5px 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .balance-box { margin-top: 20px; text-align: left; }
+        /* मोबाइल पर स्क्रीन फिक्स रखने के लिए CSS */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            font-family: sans-serif;
+            background: #7aa6e7;
+            padding-bottom: 70px;
+        }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #fff; }
+        .logo { width: 40px; height: 40px; border-radius: 50%; background: #ddd; }
         
-        .quota-card { background: white; margin: 20px 15px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .top-up-btn { background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .balance-card { background: #fff; margin: 15px; padding: 20px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .quota-card { background: #fff; margin: 15px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; }
         
-        .menu-list { background: white; margin: 0 15px; border-radius: 15px; padding: 10px 0; }
-        .menu-item { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; }
+        .menu-item { background: #fff; margin: 10px 15px; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: #000; }
+        
+        .top-up-btn { background: linear-gradient(90deg, #6a11cb, #2575fc); color: #fff; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 14px; }
+        .copy-btn { cursor: pointer; background: #eee; border: none; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 5px; }
+
+        /* Navigation Bar */
+        .navbar { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #ddd; z-index: 1000; }
+        .nav-item { text-align: center; font-size: 12px; color: #555; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<div class="header-bg">
-    <div class="profile-top">
-        <img src="13932.jpg" class="logo" alt="Logo"> 
-        <div class="id-box" onclick="copyID()">ID: <span id="uid">Loading...</span> 📋</div>
+<div class="header">
+    <div class="logo">
+        <img src="14323.jpg" alt="Logo" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
     </div>
-    <div class="balance-box">
-        <small>Available Balance</small>
-        <div style="font-size: 28px; font-weight: bold;" id="balance">₹ 0.00</div>
-    </div>
-</div>
-
-<div class="quota-card">
     <div>
-        <small><strong>Quota</strong></small><br>
-        <small>Current: 1,00,000 | Pending: ₹0.00</small>
+        ID: <span id="user-id">Loading...</span>
+        <button class="copy-btn" onclick="copyId()">Copy</button>
     </div>
-    <button class="top-up-btn" onclick="location.href='deposit.html'">Top Up</button>
 </div>
 
-<div class="menu-list">
-    <div class="menu-item" onclick="location.href='recharge_history.html'">💳 Recharge History <span>></span></div>
-    <div class="menu-item" onclick="location.href='token_history.html'">🔄 Token History <span>></span></div>
-    <div class="menu-item" onclick="location.href='bank.html'">🔗 Link Bank Account <span>></span></div>
-    <div class="menu-item">✏️ Edit Profile <span>></span></div>
-    <div class="menu-item" onclick="location.href='contact.html'">📞 Contact us <span>></span></div>
-    <div class="menu-item" onclick="location.href='team.html'">👥 My Team <span>></span></div>
-    <div class="menu-item" style="color:red;" onclick="logout()">📤 Sign Out <span>></span></div>
-</div>
+    <div class="balance-card">
+        <small>Available Balance</small>
+        <h2>₹ 0.00</h2>
+    </div>
 
-<div class="nav">
-    <a href="dashboard.html" style="text-decoration:none; color:#555;">🏠 Home</a>
-    <a href="deposit.html" style="text-decoration:none; color:#555;">💰 Deposit</a>
-    <a href="bank.html" style="text-decoration:none; color:#555;">🏦 Bank</a>
-    <a href="team.html" style="text-decoration:none; color:#555;">👥 Team</a>
-    <a href="profile.html" style="text-decoration:none; color:#555;">👤 Profile</a>
-</div>
+    <div class="quota-card" style="margin-top: 5px;">
+        <div><strong>My Referral Code</strong><br><small id="my-ref-code">Loading...</small></div>
+        <button class="copy-btn" onclick="copyRef()">Copy Code</button>
+    </div>
 
-<script>
-    async function loadProfile() {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-            window.location.href = "login.html";
-            return;
-        }
+    <div class="quota-card">
+        <div><strong>Quota</strong><br><small>Current: 0</small></div>
+        <div><small>Pending:</small><br><strong>₹ 0.00</strong></div>
+        <a href="deposit.html" class="top-up-btn">Top Up</a>
+    </div>
 
-        try {
-            // आपकी लाइव रेंडर लिंक यहाँ सेट कर दी है
-            const response = await fetch(`https://r-n-pay.onrender.com/profile/${userId}`);
-            const data = await response.json();
-            
-            if (data.success) {
-                document.getElementById('uid').innerText = data.userId;
-                document.getElementById('balance').innerText = "₹ " + (data.balance ? data.balance.toFixed(2) : "0.00");
+    <a href="recharge_history.html" class="menu-item">Recharge History <span>></span></a>
+    <a href="token_history.html" class="menu-item">Token History <span>></span></a>
+    <a href="bank.html" class="menu-item">Link Bank Account <span>></span></a>
+    <a href="https://t.me/Randipayofficialchannel" class="menu-item">Contact us (Telegram) <span>></span></a>
+    <a href="Team.html" class="menu-item">My Team <span>></span></a>
+    <a href="#" onclick="logout()" class="menu-item" style="color: red;">Sign Out <span>></span></a>
+
+    <div class="navbar">
+        <a href="dashboard.html" class="nav-item">🏠<br>Home</a>
+        <a href="deposit.html" class="nav-item">💰<br>Deposit</a>
+        <a href="bank.html" class="nav-item">🏦<br>Bank</a>
+        <a href="team.html" class="nav-item">👥<br>Team</a>
+        <a href="profile.html" class="nav-item" style="color: #00d4ff;">👤<br>Profile</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedUserID = localStorage.getItem('userID');
+            const savedRefCode = localStorage.getItem('myReferralCode');
+
+            if (savedUserID) {
+                document.getElementById('user-id').innerText = savedUserID;
             } else {
-                document.getElementById('uid').innerText = "Not Found";
+                document.getElementById('user-id').innerText = "Not Logged In";
             }
-        } catch (error) {
-            document.getElementById('uid').innerText = "Error";
-            console.error("Error loading profile:", error);
+
+            if (savedRefCode) {
+                document.getElementById('my-ref-code').innerText = savedRefCode;
+            } else {
+                document.getElementById('my-ref-code').innerText = "NONE";
+            }
+        });
+
+        function copyId() {
+            const id = document.getElementById('user-id').innerText;
+            if(id !== "Loading..." && id !== "Not Logged In") {
+                navigator.clipboard.writeText(id).then(() => alert("ID Copied: " + id));
+            }
         }
-    }
 
-    function copyID() {
-        let id = document.getElementById('uid').innerText;
-        if(id === "Loading..." || id === "Error") return;
-        navigator.clipboard.writeText(id);
-        alert("ID Copied!");
-    }
+        function copyRef() {
+            const ref = document.getElementById('my-ref-code').innerText;
+            if(ref !== "Loading..." && ref !== "NONE") {
+                navigator.clipboard.writeText(ref).then(() => alert("Referral Code Copied: " + ref));
+            }
+        }
 
-    function logout() {
-        localStorage.removeItem('userId');
-        window.location.href = "login.html";
-    }
-
-    window.onload = loadProfile;
-</script>
+        function logout() {
+            localStorage.clear();
+            alert('Signed Out!');
+            window.location.href = 'register.html';
+        }
+    </script>
 </body>
 </html>
