@@ -75,12 +75,12 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const myRefCode = localStorage.getItem('myReferralCode');
-            const baseUrl = "https://randi-pay.onrender.com/regist";
+            const baseUrl = "https://nr-pay.onrender.com/regist";
 
             if (myRefCode && myRefCode !== "NONE") {
                 document.getElementById('invite-link').innerText = `${baseUrl}?code=${myRefCode}`;
                 fetchTeamData(myRefCode);
-            } else {
+            } else {ra
                 document.getElementById('invite-link').innerText = "Not Logged In / No Code Found";
                 document.getElementById('team-list-container').innerHTML = '<p style="text-align: center; color: red;">Please log in first.</p>';
             }
